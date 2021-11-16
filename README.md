@@ -1,5 +1,9 @@
 # Action Roguelike Game (Course Project)
 
+## Here's what the game looks like up to this point
+
+![](gifs\ActionRogueLike-2.gif)
+
 This project is part of the **[Professional Game Development in C++ and Unreal Engine](https://www.tomlooman.com/pro-course-github)** Course where we build this project step-by-step.
 
 ![Course Header](https://www.tomlooman.com/wp-content/uploads/2021/09/course_heroheader-1.jpg)
