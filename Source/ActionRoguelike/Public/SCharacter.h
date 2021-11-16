@@ -29,6 +29,7 @@ protected:
 	USpringArmComponent* SpringArmComp;
 
 	void MoveForward(float val);
+	void MoveRight(float val);
 
 public:	
 	// Called every frame
