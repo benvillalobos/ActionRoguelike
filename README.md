@@ -1,8 +1,8 @@
 # Action Roguelike Game (Course Project)
 
-## Here's what the game looks like up to this point
+## Latest gif
 
-![](gifs\ActionRogueLike-3.gif)
+![](gifs\ActionRogueLike-5-chest.gif)
 
 This project is part of the **[Professional Game Development in C++ and Unreal Engine](https://www.tomlooman.com/pro-course-github)** Course where we build this project step-by-step.
 
