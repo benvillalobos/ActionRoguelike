@@ -23,6 +23,6 @@ class ACTIONROGUELIKE_API ISGameplayInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	// BlueprintImplementableEvent is ONLY for blueprints
-	UFUNCTION(BlueprintNativeEvent) // for cpp AND blueprints
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent) // for cpp AND blueprints
 	void Interact(APawn* InstigatorPawn);
 };

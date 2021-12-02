@@ -66,7 +66,7 @@ void ASCharacter::MoveRight(float val)
 	AddMovementInput(UKismetMathLibrary::GetRightVector(controlRot), val);
 }
 
-void ASCharacter::PrimaryAttack()
+void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	FTransform SpawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
 
@@ -75,6 +75,13 @@ void ASCharacter::PrimaryAttack()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.18f);
 }
 
 void ASCharacter::PrimaryInteract()

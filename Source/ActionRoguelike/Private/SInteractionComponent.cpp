@@ -3,6 +3,7 @@
 
 #include "SInteractionComponent.h"
 
+#include "DrawDebugHelpers.h"
 #include "SGameplayInterface.h"
 
 // Sets default values for this component's properties
@@ -26,19 +27,38 @@ void USInteractionComponent::PrimaryInteract()
 	FRotator EyeRotation;
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
-	FVector End = EyeLocation + (EyeRotation.Vector() * 1000.0f);
-	FHitResult Hit;
-	GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
+	float distance = 300.0f;
 
-	AActor* HitActor = Hit.GetActor();
-	if (HitActor)
+	// Draw a line to see where we were looking when we interacted
+	FVector End = EyeLocation + (EyeRotation.Vector() * distance);
+	FHitResult LineHit;
+	bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(LineHit, EyeLocation, End, ObjectQueryParams);
+	DrawDebugLine(GetWorld(), EyeLocation, End, bBlockingHit ? FColor::Green : FColor::Red, false, 2.0f, 0, 2.0f);
+
+	TArray<FHitResult> Hits;
+	FCollisionShape Shape;
+	float Radius = 50.0f;
+	Shape.SetSphere(Radius);
+
+	// Make sure the hit detection is "wide"
+	bool bSweepHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+
+	for (FHitResult Hit : Hits)
 	{
-		if (HitActor->Implements<USGameplayInterface>())
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor)
 		{
-			APawn* MyPawn = Cast<APawn>(MyOwner);
-			ISGameplayInterface::Execute_Interact(HitActor, MyPawn);
+			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, bSweepHit ? FColor::Green : FColor::Red, false, 2.0f, 0, 2.0f);
+
+			if (HitActor->Implements<USGameplayInterface>())
+			{
+				APawn* MyPawn = Cast<APawn>(MyOwner);
+				ISGameplayInterface::Execute_Interact(HitActor, MyPawn);
+				break; //stop once we've interacted with something
+			}
 		}
 	}
+
 }
 
 

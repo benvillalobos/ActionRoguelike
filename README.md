@@ -2,7 +2,7 @@
 
 ## Latest gif
 
-![](gifs\ActionRogueLike-5-chest.gif)
+![](gifs\ActionRogueLike-6-lec4-complete.gif)
 
 This project is part of the **[Professional Game Development in C++ and Unreal Engine](https://www.tomlooman.com/pro-course-github)** Course where we build this project step-by-step.
 

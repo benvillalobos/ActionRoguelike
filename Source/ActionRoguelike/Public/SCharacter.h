@@ -17,9 +17,14 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 	
 protected:
 	// Creating a generic projectile variable. (Q: Why not just make it an AActor?)
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	UAnimMontage* AttackAnim;
 	
+	FTimerHandle TimerHandle_PrimaryAttack;
+
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
@@ -39,6 +44,7 @@ protected:
 
 	void MoveForward(float val);
 	void MoveRight(float val);
+	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
 	void PrimaryInteract();
 
