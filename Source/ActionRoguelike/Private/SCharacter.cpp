@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Containers/Array.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -68,14 +69,42 @@ void ASCharacter::MoveRight(float val)
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
-	FTransform SpawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
+	TArray<FHitResult> lineTraceHits;
 
-	FActorSpawnParameters SpawnParams;
+	FVector cameraLocation = CameraComp->GetComponentLocation();
 
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	// Grab the character's hand right just before the attack
+	FTransform spawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
+	// Pick a location VERY far away from what the camera is looking at
+	FVector lineTraceEnd = cameraLocation + (CameraComp->GetComponentRotation().Vector() * 100000000.0f);
+	// Check if shooting a ray from the camera out into the world hits anything
+	bool bDidHitSomething = GetWorld()->LineTraceMultiByChannel(lineTraceHits, cameraLocation, lineTraceEnd, ECC_WorldStatic);
+
+	if (bDidHitSomething)
+	{
+		for (int i = 0; i < lineTraceHits.Num(); i++)
+		{
+			// Prevent the player from being detected by the line trace.
+			// This could probably be optimized to have the line trace 
+			// ignore the player in the first place.
+			if (lineTraceHits[i].Actor != this)
+			{
+				lineTraceEnd = lineTraceHits[i].Location;
+				FRotator projectileRotation = UKismetMathLibrary::FindLookAtRotation(spawnTM.GetLocation(), lineTraceHits[i].Location);
+				spawnTM.SetRotation(projectileRotation.Quaternion());
+				break;
+			}
+		}
+	}
+
+	DrawDebugLine(GetWorld(), spawnTM.GetLocation(), lineTraceEnd, bDidHitSomething ? FColor::Red : FColor::Green, false, 2.0f, 0, 2.0f);
+
+	FActorSpawnParameters spawnParams;
+
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	spawnParams.Instigator = this;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, spawnTM, spawnParams);
 }
 
 void ASCharacter::PrimaryAttack()
