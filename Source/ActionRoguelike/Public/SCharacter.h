@@ -22,6 +22,9 @@ protected:
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<AActor> BlackHoleProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
 	UAnimMontage* AttackAnim;
 	
 	FTimerHandle TimerHandle_PrimaryAttack;
@@ -45,9 +48,12 @@ protected:
 
 	void MoveForward(float val);
 	void MoveRight(float val);
-	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
+	void BlackHoleAttack();
+	void PrimaryAttack_TimeElapsed();
+	void BlackHoleAttack_TimeElapsed();
 	void PrimaryInteract();
+	void LaunchStandardProjectile(TSubclassOf<AActor> projectileClass);
 	USGameInstance* gameInstance;
 
 public:	
@@ -56,7 +62,8 @@ public:
 
 	// Trigger global var to enable/disable drawing debug symbols (arrows, line traces, etc.)
 	void DebugButton();
-	
+
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

@@ -71,6 +71,30 @@ void ASCharacter::MoveRight(float val)
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
+	LaunchStandardProjectile(ProjectileClass);
+}
+
+void ASCharacter::BlackHoleAttack_TimeElapsed()
+{
+	LaunchStandardProjectile(BlackHoleProjectileClass);
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.18f);
+}
+
+void ASCharacter::BlackHoleAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &ASCharacter::BlackHoleAttack_TimeElapsed, 0.18f);
+}
+
+void ASCharacter::LaunchStandardProjectile(TSubclassOf<AActor> projectileClass)
+{
 	TArray<FHitResult> lineTraceHits;
 
 	FVector cameraLocation = CameraComp->GetComponentLocation();
@@ -109,14 +133,7 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawnParams.Instigator = this;
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, spawnTM, spawnParams);
-}
-
-void ASCharacter::PrimaryAttack()
-{
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.18f);
+	GetWorld()->SpawnActor<AActor>(projectileClass, spawnTM, spawnParams);
 }
 
 void ASCharacter::PrimaryInteract()
@@ -126,7 +143,6 @@ void ASCharacter::PrimaryInteract()
 		InteractionComp->PrimaryInteract();
 	}
 }
-
 
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
@@ -155,12 +171,10 @@ void ASCharacter::Tick(float DeltaTime)
 
 void ASCharacter::DebugButton()
 {
-	if (!gameInstance)
-	{
+	if (gameInstance)
+		gameInstance->DrawDebugInfo = ! gameInstance->DrawDebugInfo;
+	else
 		gameInstance = Cast<USGameInstance>(GetGameInstance());
-	}
-
-	gameInstance->DrawDebugInfo = ! gameInstance->DrawDebugInfo;
 }
 
 // Called to bind functionality to input
@@ -177,6 +191,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Lookup", this, &APawn::AddControllerPitchInput);
 	
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("DebugButton", IE_Pressed, this, &ASCharacter::DebugButton);
