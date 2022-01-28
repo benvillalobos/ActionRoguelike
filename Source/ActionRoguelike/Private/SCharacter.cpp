@@ -4,6 +4,7 @@
 #include "../Public/SCharacter.h"
 
 #include "DrawDebugHelpers.h"
+#include "SGameInstance.h"
 #include "SMagicProjectile.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -34,7 +35,8 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	gameInstance = Cast<USGameInstance>(GetGameInstance());
+	gameInstance->DrawDebugInfo = true;
 }
 
 void ASCharacter::MoveForward(float val)
@@ -97,7 +99,10 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 		}
 	}
 
-	DrawDebugLine(GetWorld(), spawnTM.GetLocation(), lineTraceEnd, bDidHitSomething ? FColor::Red : FColor::Green, false, 2.0f, 0, 2.0f);
+	if (gameInstance && gameInstance->DrawDebugInfo)
+	{
+		DrawDebugLine(GetWorld(), spawnTM.GetLocation(), lineTraceEnd, bDidHitSomething ? FColor::Red : FColor::Green, false, 2.0f, 0, 2.0f);
+	}
 
 	FActorSpawnParameters spawnParams;
 
@@ -128,22 +133,34 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	// -- Rotation Visualization -- //
-	const float DrawScale = 100.0f;
-	const float Thickness = 5.0f;
+	if (gameInstance && gameInstance->DrawDebugInfo)
+	{
+		// -- Rotation Visualization -- //
+		const float DrawScale = 100.0f;
+		const float Thickness = 5.0f;
 
-	FVector LineStart = GetActorLocation();
-	// Offset to the right of pawn
-	LineStart += GetActorRightVector() * 100.0f;
-	// Set line end in direction of the actor's forward
-	FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
-	// Draw Actor's Direction
-	DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow, false, 0.0f, 0, Thickness);
+		FVector LineStart = GetActorLocation();
+		// Offset to the right of pawn
+		LineStart += GetActorRightVector() * 100.0f;
+		// Set line end in direction of the actor's forward
+		FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
+		FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
+		
+		// Draw actor's direction
+		DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow, false, 0.0f, 0, Thickness);
+		// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
+		DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green, false, 0.0f, 0, Thickness);
+	}
+}
 
-	FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
-	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
-	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green, false, 0.0f, 0, Thickness);
+void ASCharacter::DebugButton()
+{
+	if (!gameInstance)
+	{
+		gameInstance = Cast<USGameInstance>(GetGameInstance());
+	}
 
+	gameInstance->DrawDebugInfo = ! gameInstance->DrawDebugInfo;
 }
 
 // Called to bind functionality to input
@@ -162,6 +179,6 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
-
+	PlayerInputComponent->BindAction("DebugButton", IE_Pressed, this, &ASCharacter::DebugButton);
 }
 

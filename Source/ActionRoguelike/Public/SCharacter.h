@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SGameInstance.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
@@ -47,11 +48,15 @@ protected:
 	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
 	void PrimaryInteract();
+	USGameInstance* gameInstance;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Trigger global var to enable/disable drawing debug symbols (arrows, line traces, etc.)
+	void DebugButton();
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

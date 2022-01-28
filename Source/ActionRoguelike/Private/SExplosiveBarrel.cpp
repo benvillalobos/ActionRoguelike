@@ -3,6 +3,7 @@
 
 #include "SExplosiveBarrel.h"
 #include "DrawDebugHelpers.h"
+#include "SGameInstance.h"
 
 // Sets default values
 ASExplosiveBarrel::ASExplosiveBarrel()
@@ -37,14 +38,17 @@ void ASExplosiveBarrel::BeginPlay()
 
 void ASExplosiveBarrel::Explode(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hit the barrel!");
 	ForceComp->FireImpulse();
 
-	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
 
 	FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
-	
-	DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.0f, true);
+
+	if (Cast<USGameInstance>(GetGameInstance())->DrawDebugInfo)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hit the barrel!");
+		UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
+		DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.0f, true);
+	}
 }
 
 // Called every frame
