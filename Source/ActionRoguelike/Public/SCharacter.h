@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SDashProjectile.h"
 #include "SGameInstance.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/Character.h"
@@ -15,8 +16,16 @@ UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
 	GENERATED_BODY()
+private:
+	// The command design pattern can significantly help maintaining this code.
+	bool dashIsOnCooldown = false;
+	float dashCooldown = 2.0f;
+	float dashTimer = 0.0f;
 	
 protected:
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<AActor> DashProjectileClass;
+	
 	// Creating a generic projectile variable. (Q: Why not just make it an AActor?)
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
@@ -50,8 +59,10 @@ protected:
 	void MoveRight(float val);
 	void PrimaryAttack();
 	void BlackHoleAttack();
+	void DashAttack();
 	void PrimaryAttack_TimeElapsed();
 	void BlackHoleAttack_TimeElapsed();
+	void DashAttack_TimeElapsed();
 	void PrimaryInteract();
 	void LaunchStandardProjectile(TSubclassOf<AActor> projectileClass);
 	USGameInstance* gameInstance;
@@ -62,8 +73,7 @@ public:
 
 	// Trigger global var to enable/disable drawing debug symbols (arrows, line traces, etc.)
 	void DebugButton();
-
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

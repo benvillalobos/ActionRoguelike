@@ -79,6 +79,11 @@ void ASCharacter::BlackHoleAttack_TimeElapsed()
 	LaunchStandardProjectile(BlackHoleProjectileClass);
 }
 
+void ASCharacter::DashAttack_TimeElapsed()
+{
+	LaunchStandardProjectile(DashProjectileClass);
+}
+
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
@@ -91,6 +96,18 @@ void ASCharacter::BlackHoleAttack()
 	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &ASCharacter::BlackHoleAttack_TimeElapsed, 0.18f);
+}
+
+// wish I knew how to put all of this into one method that changes the method that's called
+void ASCharacter::DashAttack()
+{
+	if (dashIsOnCooldown)
+		return;
+	
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &ASCharacter::DashAttack_TimeElapsed, 0.18f);
+	dashIsOnCooldown = true;
 }
 
 void ASCharacter::LaunchStandardProjectile(TSubclassOf<AActor> projectileClass)
@@ -148,6 +165,17 @@ void ASCharacter::PrimaryInteract()
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (dashIsOnCooldown)
+	{
+		dashTimer += DeltaTime;
+
+		if (dashTimer >= dashCooldown)
+		{
+			dashIsOnCooldown = false;
+			dashTimer = 0.0f;
+		}
+	}
 	
 	if (gameInstance && gameInstance->DrawDebugInfo)
 	{
@@ -192,6 +220,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("BlackHoleAttack", IE_Pressed, this, &ASCharacter::BlackHoleAttack);
+	PlayerInputComponent->BindAction("DashAttack", IE_Pressed, this, &ASCharacter::DashAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("DebugButton", IE_Pressed, this, &ASCharacter::DebugButton);

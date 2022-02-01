@@ -33,7 +33,7 @@ ASMagicProjectile::ASMagicProjectile()
 void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 }
 
 

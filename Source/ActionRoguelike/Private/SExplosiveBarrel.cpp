@@ -40,7 +40,6 @@ void ASExplosiveBarrel::Explode(UPrimitiveComponent* HitComponent, AActor* Other
 {
 	ForceComp->FireImpulse();
 
-
 	FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
 
 	if (Cast<USGameInstance>(GetGameInstance())->DrawDebugInfo)
