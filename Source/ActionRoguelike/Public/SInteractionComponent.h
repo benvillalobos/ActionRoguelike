@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SGameInstance.h"
 #include "Components/ActorComponent.h"
 #include "SInteractionComponent.generated.h"
 
@@ -21,6 +22,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	USGameInstance* gameInstance;
 
 public:	
 	// Called every frame

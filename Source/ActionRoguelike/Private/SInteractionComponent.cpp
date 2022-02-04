@@ -4,7 +4,9 @@
 #include "SInteractionComponent.h"
 
 #include "DrawDebugHelpers.h"
+#include "SCharacter.h"
 #include "SGameplayInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 USInteractionComponent::USInteractionComponent()
@@ -46,8 +48,11 @@ void USInteractionComponent::PrimaryInteract()
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor)
 		{
-			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, bSweepHit ? FColor::Green : FColor::Red, false, 2.0f, 0, 2.0f);
-
+			if (gameInstance && gameInstance->DrawDebugInfo)
+			{
+				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, bSweepHit ? FColor::Green : FColor::Red, false, 2.0f, 0, 2.0f);
+			}
+			
 			if (HitActor->Implements<USGameplayInterface>())
 			{
 				APawn* MyPawn = Cast<APawn>(MyOwner);
@@ -64,9 +69,8 @@ void USInteractionComponent::PrimaryInteract()
 void USInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
+	gameInstance = Cast<USGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 

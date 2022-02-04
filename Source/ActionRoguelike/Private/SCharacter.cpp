@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Containers/Array.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -33,7 +34,7 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	gameInstance = Cast<USGameInstance>(GetGameInstance());
+	gameInstance = Cast<USGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	gameInstance->DrawDebugInfo = true;
 }
 
@@ -110,45 +111,48 @@ void ASCharacter::DashAttack()
 
 void ASCharacter::LaunchStandardProjectile(TSubclassOf<AActor> projectileClass)
 {
-	TArray<FHitResult> lineTraceHits;
-
-	FVector cameraLocation = CameraComp->GetComponentLocation();
-
-	// Grab the character's hand right just before the attack
-	FTransform spawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
-	// Pick a location VERY far away from what the camera is looking at
-	FVector lineTraceEnd = cameraLocation + (CameraComp->GetComponentRotation().Vector() * 100000000.0f);
-	// Check if shooting a ray from the camera out into the world hits anything
-	bool bDidHitSomething = GetWorld()->LineTraceMultiByChannel(lineTraceHits, cameraLocation, lineTraceEnd, ECC_WorldStatic);
-
-	if (bDidHitSomething)
+	if (ensure(projectileClass))
 	{
-		for (int i = 0; i < lineTraceHits.Num(); i++)
+		TArray<FHitResult> lineTraceHits;
+
+		FVector cameraLocation = CameraComp->GetComponentLocation();
+
+		// Grab the character's hand right just before the attack
+		FTransform spawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
+		// Pick a location VERY far away from what the camera is looking at
+		FVector lineTraceEnd = cameraLocation + (CameraComp->GetComponentRotation().Vector() * 100000000.0f);
+		// Check if shooting a ray from the camera out into the world hits anything
+		bool bDidHitSomething = GetWorld()->LineTraceMultiByChannel(lineTraceHits, cameraLocation, lineTraceEnd, ECC_WorldStatic);
+
+		if (bDidHitSomething)
 		{
-			// Prevent the player from being detected by the line trace.
-			// This could probably be optimized to have the line trace 
-			// ignore the player in the first place.
-			if (lineTraceHits[i].Actor != this)
+			for (int i = 0; i < lineTraceHits.Num(); i++)
 			{
-				lineTraceEnd = lineTraceHits[i].Location;
-				FRotator projectileRotation = UKismetMathLibrary::FindLookAtRotation(spawnTM.GetLocation(), lineTraceHits[i].Location);
-				spawnTM.SetRotation(projectileRotation.Quaternion());
-				break;
+				// Prevent the player from being detected by the line trace.
+				// This could probably be optimized to have the line trace 
+				// ignore the player in the first place.
+				if (lineTraceHits[i].Actor != this)
+				{
+					lineTraceEnd = lineTraceHits[i].Location;
+					FRotator projectileRotation = UKismetMathLibrary::FindLookAtRotation(spawnTM.GetLocation(), lineTraceHits[i].Location);
+					spawnTM.SetRotation(projectileRotation.Quaternion());
+					break;
+				}
 			}
 		}
+
+		if (gameInstance && gameInstance->DrawDebugInfo)
+		{
+			DrawDebugLine(GetWorld(), spawnTM.GetLocation(), lineTraceEnd, bDidHitSomething ? FColor::Red : FColor::Green, false, 2.0f, 0, 2.0f);
+		}
+
+		FActorSpawnParameters spawnParams;
+
+		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		spawnParams.Instigator = this;
+
+		GetWorld()->SpawnActor<AActor>(projectileClass, spawnTM, spawnParams);
 	}
-
-	if (gameInstance && gameInstance->DrawDebugInfo)
-	{
-		DrawDebugLine(GetWorld(), spawnTM.GetLocation(), lineTraceEnd, bDidHitSomething ? FColor::Red : FColor::Green, false, 2.0f, 0, 2.0f);
-	}
-
-	FActorSpawnParameters spawnParams;
-
-	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	spawnParams.Instigator = this;
-
-	GetWorld()->SpawnActor<AActor>(projectileClass, spawnTM, spawnParams);
 }
 
 void ASCharacter::PrimaryInteract()
