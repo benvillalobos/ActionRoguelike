@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "SMagicProjectile.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "SDashProjectile.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API ASDashProjectile : public ASMagicProjectile
+class ACTIONROGUELIKE_API ASDashProjectile : public ASBaseProjectile
 {
 	GENERATED_BODY()
 

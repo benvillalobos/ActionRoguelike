@@ -2,7 +2,6 @@
 
 
 #include "SDashProjectile.h"
-
 #include "AITypes.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 #include "Kismet/GameplayStatics.h"
@@ -16,6 +15,8 @@ ASDashProjectile::ASDashProjectile() : Super()
 void ASDashProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+
 	GetWorldTimerManager().SetTimer(TimerHandle_Explosion,this, &ASDashProjectile::Explosion, 0.2f);
 }
 

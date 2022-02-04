@@ -2,10 +2,8 @@
 
 
 #include "../Public/SCharacter.h"
-
 #include "DrawDebugHelpers.h"
 #include "SGameInstance.h"
-#include "SMagicProjectile.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
