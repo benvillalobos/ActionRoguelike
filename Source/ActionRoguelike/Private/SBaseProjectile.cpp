@@ -2,6 +2,8 @@
 
 
 #include "SBaseProjectile.h"
+
+#include "SMagicProjectile.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values

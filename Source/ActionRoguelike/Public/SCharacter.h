@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SAttributeComponent.h"
 #include "SGameInstance.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/Character.h"
@@ -10,6 +11,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class USAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -53,6 +55,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USAttributeComponent* AttributeComp;
 
 	void MoveForward(float val);
 	void MoveRight(float val);

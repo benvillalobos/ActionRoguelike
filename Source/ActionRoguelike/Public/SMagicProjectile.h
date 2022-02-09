@@ -11,7 +11,10 @@ class ACTIONROGUELIKE_API ASMagicProjectile : public ASBaseProjectile
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	// UFUNCTION allows OnComponentOverlap to bind properly
+	UFUNCTION()
+	void OnComponentOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult&  SweepResult);
 	// Sets default values for this actor's properties
 	ASMagicProjectile();
 
