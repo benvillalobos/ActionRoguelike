@@ -13,6 +13,7 @@ USAttributeComponent::USAttributeComponent()
 void USAttributeComponent::ModifyHealth(float val)
 {
 	Health += val;
+	OnHealthChanged.Broadcast(nullptr, this, Health, val);
 }
 
 // Called when the game starts
