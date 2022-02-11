@@ -3,6 +3,7 @@
 
 #include "SExplosiveBarrel.h"
 #include "DrawDebugHelpers.h"
+#include "SAttributeComponent.h"
 #include "SGameInstance.h"
 
 // Sets default values
@@ -40,10 +41,18 @@ void ASExplosiveBarrel::Explode(UPrimitiveComponent* HitComponent, AActor* Other
 {
 	ForceComp->FireImpulse();
 
-	FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
+	if (OtherActor)
+	{
+		USAttributeComponent* healthComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if (healthComp)
+		{
+			healthComp->ModifyHealth(-20.0f);
+		}
+	}
 
 	if (Cast<USGameInstance>(GetGameInstance())->DrawDebugInfo)
 	{
+		FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hit the barrel!");
 		UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
 		DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.0f, true);
