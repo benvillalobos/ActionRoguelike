@@ -59,6 +59,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USAttributeComponent* AttributeComp;
 
+	UFUNCTION()
+	void OnHealthChanged(AActor* OtherActor, USAttributeComponent* OwningComp, float newHealth, float Delta);
+
+	virtual void PostInitializeComponents() override;
+
 	void MoveForward(float val);
 	void MoveRight(float val);
 	void PrimaryAttack();
@@ -71,7 +76,7 @@ protected:
 	void LaunchStandardProjectile(TSubclassOf<AActor> projectileClass);
 	USGameInstance* gameInstance;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

@@ -18,6 +18,10 @@ public:
 	ASBaseProjectile();
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float Damage = -20.0f;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	

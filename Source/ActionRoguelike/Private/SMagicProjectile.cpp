@@ -16,7 +16,7 @@ void ASMagicProjectile::OnComponentOverlap(UPrimitiveComponent* OverlappedCompon
 
 		if (AttributeComp)
 		{
-			AttributeComp->ModifyHealth(-20.0f);
+			AttributeComp->ModifyHealth(Damage);
 			if (Cast<USGameInstance>(GetGameInstance())->DrawDebugInfo)
 			{
 				UE_LOG(LogTemp, Error, TEXT("OtherActor: %s, was hit at game time %f for %f damage"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds, -20.0f);

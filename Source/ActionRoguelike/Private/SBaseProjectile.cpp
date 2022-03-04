@@ -34,7 +34,6 @@ ASBaseProjectile::ASBaseProjectile()
 void ASBaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

@@ -30,12 +30,28 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	gameInstance = Cast<USGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	gameInstance->DrawDebugInfo = true;
+}
+
+void ASCharacter::OnHealthChanged(AActor* OtherActor, USAttributeComponent* OwningComp, float newHealth, float Delta)
+{
+	// Disable input when player dies.
+	if (newHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* controller = Cast<APlayerController>(GetController());
+		DisableInput(controller);
+	}
 }
 
 void ASCharacter::MoveForward(float val)
