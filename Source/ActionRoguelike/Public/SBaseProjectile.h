@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UParticleSystemComponent* EffectComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UParticleSystem* ImpactVFX;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

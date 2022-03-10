@@ -27,13 +27,13 @@ ASBaseProjectile::ASBaseProjectile()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
-
 }
 
 // Called when the game starts or when spawned
 void ASBaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 }
 
 // Called every frame

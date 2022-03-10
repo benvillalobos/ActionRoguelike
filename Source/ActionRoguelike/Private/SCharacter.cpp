@@ -163,7 +163,7 @@ void ASCharacter::LaunchStandardProjectile(TSubclassOf<AActor> projectileClass)
 		}
 
 		FActorSpawnParameters spawnParams;
-
+		
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		spawnParams.Instigator = this;
 
