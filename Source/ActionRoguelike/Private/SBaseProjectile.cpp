@@ -13,9 +13,10 @@ ASBaseProjectile::ASBaseProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
-	SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
-	// Edit -> Project Settings -> Collision to add a profile
 	SphereComp->SetCollisionProfileName("Projectile");
+
+	// Edit -> Project Settings -> Collision to add a profile
+	//SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
 	/*SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);*/
 	RootComponent = SphereComp;

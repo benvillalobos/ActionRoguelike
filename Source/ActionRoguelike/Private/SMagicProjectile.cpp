@@ -12,7 +12,7 @@
 void ASMagicProjectile::OnComponentOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && OtherActor != GetInstigator())
+	if (OtherActor)
 	{
 		// StaticClass: https://youtu.be/IaU2Hue-ApI?t=262
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
@@ -35,12 +35,12 @@ void ASMagicProjectile::OnComponentOverlap(UPrimitiveComponent* OverlappedCompon
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
 {
+	
 }
 
-// Called when the game starts or when spawned
-void ASMagicProjectile::BeginPlay()
+void ASMagicProjectile::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnComponentOverlap);
 }
 
