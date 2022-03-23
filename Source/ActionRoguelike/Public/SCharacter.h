@@ -59,7 +59,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USAttributeComponent* AttributeComp;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnHealthChanged(AActor* OtherActor, USAttributeComponent* OwningComp, float newHealth, float Delta);
 
 	virtual void PostInitializeComponents() override;

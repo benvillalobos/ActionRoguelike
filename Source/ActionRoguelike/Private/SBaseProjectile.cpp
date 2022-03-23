@@ -14,6 +14,7 @@ ASBaseProjectile::ASBaseProjectile()
 	
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->SetSphereRadius(20.0f);
 
 	// Edit -> Project Settings -> Collision to add a profile
 	//SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
